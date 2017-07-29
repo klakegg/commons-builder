@@ -25,7 +25,7 @@ public class SampleObject {
         });
     }
 
-    public SampleObject(Properties properties) {
+    private SampleObject(Properties properties) {
         this.properties = properties;
     }
 
