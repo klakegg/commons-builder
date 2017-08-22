@@ -1,6 +1,8 @@
 package net.klakegg.commons.builder;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -8,12 +10,25 @@ import java.util.Map;
  */
 public class Builder<T> {
 
-    protected BuildHandler<T> buildHandler;
+    protected final BuildHandler<T> buildHandler;
 
-    protected Map<Property<?>, Object> map = new HashMap<>();
+    protected final Map<Property<?>, Object> map;
 
-    public Builder(BuildHandler<T> buildHandler) {
-        this(buildHandler, new HashMap<Property<?>, Object>());
+    public static <T> Builder<T> of(BuildHandler<T> buildHandler) {
+        return new Builder<>(buildHandler, new HashMap<Property<?>, Object>());
+    }
+
+    public static <T> Builder<T> of(Properties properties, BuildHandler<T> buildHandler) {
+        return new Builder<>(buildHandler, properties.map);
+    }
+
+    public static Builder<Properties> raw() {
+        return of(new BuildHandler<Properties>() {
+            @Override
+            public Properties build(Properties properties) {
+                return properties;
+            }
+        });
     }
 
     private Builder(BuildHandler<T> buildHandler, Map<Property<?>, Object> map) {
@@ -28,7 +43,14 @@ public class Builder<T> {
         return new Builder<>(buildHandler, map);
     }
 
+    public <S> Builder<T> set(Property<List<S>> property, S... value) {
+        Map<Property<?>, Object> map = new HashMap<>(this.map);
+        map.put(property, Arrays.asList(value));
+
+        return new Builder<>(buildHandler, map);
+    }
+
     public T build() {
-        return buildHandler.perform(new Properties(map));
+        return buildHandler.build(new Properties(map));
     }
 }

@@ -7,7 +7,7 @@ import java.util.Map;
  */
 public class Properties {
 
-    private Map<Property<?>, Object> map;
+    protected Map<Property<?>, Object> map;
 
     protected Properties(Map<Property<?>, Object> map) {
         this.map = map;

@@ -5,6 +5,6 @@ package net.klakegg.commons.builder;
  */
 public interface BuildHandler<T> {
 
-    T perform(Properties properties);
+    T build(Properties properties);
 
 }

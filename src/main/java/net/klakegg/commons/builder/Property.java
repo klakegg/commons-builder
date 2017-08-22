@@ -1,6 +1,8 @@
 package net.klakegg.commons.builder;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author erlend
@@ -17,14 +19,13 @@ public class Property<T> {
         return new Property<>(defaultValue);
     }
 
-    public static <T> Property<List<T>> serviceLoader(Class<T> tClass) {
-        Iterator<T> iterator = ServiceLoader.load(tClass).iterator();
-        List<T> result = new ArrayList<>();
+    public static <T> Property<T> create(Class<? extends T> defaultValue) {
+        return new Property<>((T) defaultValue);
+    }
 
-        while (iterator.hasNext())
-            result.add(iterator.next());
-
-        return new Property<>(Collections.unmodifiableList(result));
+    @SafeVarargs
+    public static <T> Property<List<T>> createList(T... defaultValues) {
+        return new Property<>(Collections.unmodifiableList(Arrays.asList(defaultValues)));
     }
 
     private Property(T defaultValue) {
