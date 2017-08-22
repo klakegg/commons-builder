@@ -20,8 +20,8 @@ public class SampleObject {
 
     private Properties properties;
 
-    public static Builder<SampleObject> builder() {
-        return Builder.of(new BuildHandler<SampleObject>() {
+    public static Builder<SampleObject, RuntimeException> builder() {
+        return Builder.of(new BuildHandler<SampleObject, RuntimeException>() {
             @Override
             public SampleObject build(Properties properties) {
                 return new SampleObject(properties);

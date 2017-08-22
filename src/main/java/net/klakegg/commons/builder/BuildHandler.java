@@ -3,8 +3,8 @@ package net.klakegg.commons.builder;
 /**
  * @author erlend
  */
-public interface BuildHandler<T> {
+public interface BuildHandler<T, E extends Exception> {
 
-    T build(Properties properties);
+    T build(Properties properties) throws E;
 
 }

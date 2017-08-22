@@ -8,49 +8,56 @@ import java.util.Map;
 /**
  * @author erlend
  */
-public class Builder<T> {
+public class Builder<T, E extends Exception> {
 
-    protected final BuildHandler<T> buildHandler;
+    protected BuildHandler<T, E> buildHandler;
 
-    protected final Map<Property<?>, Object> map;
+    protected Map<Property<?>, Object> map;
 
-    public static <T> Builder<T> of(BuildHandler<T> buildHandler) {
+    public static <T, E extends Exception> Builder<T, E> of(BuildHandler<T, E> buildHandler) {
         return new Builder<>(buildHandler, new HashMap<Property<?>, Object>());
     }
 
-    public static <T> Builder<T> of(Properties properties, BuildHandler<T> buildHandler) {
+    public static <T, E extends Exception> Builder<T, E> of(Properties properties, BuildHandler<T, E> buildHandler) {
         return new Builder<>(buildHandler, properties.map);
     }
 
-    public static Builder<Properties> raw() {
-        return of(new BuildHandler<Properties>() {
+    public static Builder<Properties, RuntimeException> raw() {
+        return new Builder<>(new BuildHandler<Properties, RuntimeException>() {
             @Override
-            public Properties build(Properties properties) {
+            public Properties build(Properties properties) throws RuntimeException {
                 return properties;
             }
-        });
+        }, new HashMap<Property<?>, Object>());
     }
 
-    private Builder(BuildHandler<T> buildHandler, Map<Property<?>, Object> map) {
+    private Builder(BuildHandler<T, E> buildHandler, Map<Property<?>, Object> map) {
         this.buildHandler = buildHandler;
         this.map = map;
     }
 
-    public <S> Builder<T> set(Property<S> property, S value) {
+    public Builder<T, E> set(Properties properties) {
+        Map<Property<?>, Object> map = new HashMap<>(this.map);
+        map.putAll(properties.map);
+
+        return new Builder<>(buildHandler, map);
+    }
+
+    public <S> Builder<T, E> set(Property<S> property, S value) {
         Map<Property<?>, Object> map = new HashMap<>(this.map);
         map.put(property, value);
 
         return new Builder<>(buildHandler, map);
     }
 
-    public <S> Builder<T> set(Property<List<S>> property, S... value) {
+    public <S> Builder<T, E> set(Property<List<S>> property, S... value) {
         Map<Property<?>, Object> map = new HashMap<>(this.map);
         map.put(property, Arrays.asList(value));
 
         return new Builder<>(buildHandler, map);
     }
 
-    public T build() {
+    public T build() throws E {
         return buildHandler.build(new Properties(map));
     }
 }
