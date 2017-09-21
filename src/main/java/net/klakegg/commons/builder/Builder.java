@@ -50,7 +50,8 @@ public class Builder<T, E extends Exception> {
         return new Builder<>(buildHandler, map);
     }
 
-    public <S> Builder<T, E> set(Property<List<S>> property, S... value) {
+    @SafeVarargs
+    public final <S> Builder<T, E> set(Property<List<S>> property, S... value) {
         Map<Property<?>, Object> map = new HashMap<>(this.map);
         map.put(property, Arrays.asList(value));
 
